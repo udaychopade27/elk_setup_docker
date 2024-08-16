@@ -1,2 +1,2 @@
-# ELK Stack Deployment using Dokcer-compose file
+# ELK Stack Deployment using Docker-compose file
 
