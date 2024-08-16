@@ -1,48 +1,23 @@
 version: '3.7'
-
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
-    container_name: elasticsearch
+    image: elasticsearch:7.9.2
+    ports:
+      - '9200:9200'
     environment:
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    networks:
-      - elk
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.14.0
-    container_name: logstash
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
-    ports:
-      - "5044:5044"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.14.0
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    image: kibana:7.9.2
     ports:
-      - "5601:5601"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
+      - '5601:5601'
 
-networks:
-  elk:
-    driver: bridge
-
-volumes:
-  esdata:
-    driver: local
+  logstash:
+    image: logstash:7.9.2
+    ports:
+      - '5000:5000'
+    volumes:
+      - type: bind
+        source: ./logstash_pipeline/
+        target: /usr/share/logstash/pipeline
+        read_only: true
