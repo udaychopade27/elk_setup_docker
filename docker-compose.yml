@@ -6,6 +6,8 @@ services:
       - '9200:9200'
     environment:
       - discovery.type=single-node
+    volumes:
+      - elk_esdata:/usr/share/elasticsearch/data
 
   kibana:
     image: kibana:7.9.2
@@ -21,3 +23,9 @@ services:
         source: ./logstash_pipeline/
         target: /usr/share/logstash/pipeline
         read_only: true
+
+volumes:
+  elk_esdata:
+    driver: local
+
+
