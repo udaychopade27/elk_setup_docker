@@ -17,12 +17,22 @@ services:
   logstash:
     image: logstash:7.9.2
     ports:
-      - '5000:5000'
+      - '5044:5044'
     volumes:
       - type: bind
         source: ./logstash_pipeline/
         target: /usr/share/logstash/pipeline
         read_only: true
+  
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.9.2
+    container_name: filebeat
+    user: root
+    volumes:
+      - "./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
+      - "/var/log/syslog*:/var/log:ro"
+    depends_on:
+      - elasticsearch
 
 volumes:
   elk_esdata:
