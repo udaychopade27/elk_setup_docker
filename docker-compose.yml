@@ -2,37 +2,74 @@ version: '3.7'
 services:
   elasticsearch:
     image: elasticsearch:7.9.2
+    container_name: elasticsearch
     ports:
       - '9200:9200'
     environment:
       - discovery.type=single-node
+    networks:
+      - elastic
     volumes:
       - elk_esdata:/usr/share/elasticsearch/data
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
 
   kibana:
     image: kibana:7.9.2
+    container_name: kibana
+    depends_on:
+      - elasticsearch
     ports:
       - '5601:5601'
+    networks:
+      - elastic
 
   logstash:
     image: logstash:7.9.2
+    container_name: logstash
     ports:
       - '5044:5044'
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
     volumes:
-      - type: bind
-        source: ./logstash_pipeline/
-        target: /usr/share/logstash/pipeline
-        read_only: true
+      - "./logstash_pipeline/:/usr/share/logstash/pipeline:ro"
   
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.9.2
     container_name: filebeat
     user: root
+    networks:
+      - elastic
     volumes:
-      - "./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
-      - "/var/log/syslog*:/var/log:ro"
+      - "./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:rw"
+      - "/var/log/:/var/log:ro"
     depends_on:
       - elasticsearch
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.9.2
+    container_name: metricbeat
+    environment:
+      - setup.kibana.host="kibana:5601"
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
+    entrypoint: ["sh", "-c", "sleep 150 && metricbeat setup && metricbeat -e"]
+    user: root
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+      - kibana
+    volumes:
+      - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
+      - "/proc:/hostfs/proc:ro"
+      - "/:/hostfs:ro"
+    
+
+networks:
+  elastic:
 
 volumes:
   elk_esdata:
