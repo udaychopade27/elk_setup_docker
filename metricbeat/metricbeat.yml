@@ -2,6 +2,7 @@
 metricbeat.config.modules:
   path: ${path.config}/modules.d/*.yml
   reload.enabled: false
+
 # ============================== Metricbeat Autodiscover ==============================
 metricbeat.autodiscover:
   providers:
@@ -10,7 +11,7 @@ metricbeat.autodiscover:
       # Optionally, specify the Docker API endpoint
       host: "unix:///var/run/docker.sock"
       # If running Metricbeat in a Docker container, you might need:
-      host: "unix:///hostfs/var/run/docker.sock"
+      #host: "unix:///hostfs/var/run/docker.sock"
 metricbeat.modules:
 - module: system
   period: 10s
@@ -26,25 +27,12 @@ metricbeat.modules:
   processors:
     - add_host_metadata: ~
     - add_cloud_metadata: ~
-- module: docker
-  metricsets:
-    - "container"
-    - "cpu"
-    - "diskio"
-    - "event"
-    - "healthcheck"
-    - "info"
-    #- "image"
-    - "memory"
-    - "network"
-  hosts: ["unix:///var/run/docker.sock"]
-  period: 10s
-  enabled: true
 
 # ============================== Elasticsearch output ==============================
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]  # Replace with your Elasticsearch host and port
-
+  username: "elastic"
+  password: "Uday@123"
 # =============================== Kibana =====================================
 setup.kibana:
   host: "http://kibana:5601"  # Replace with your Kibana host and port

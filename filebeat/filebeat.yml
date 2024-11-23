@@ -8,3 +8,5 @@ filebeat.inputs:
     - /var/log/nginx/error.log
 output.logstash:
   hosts: ["logstash:5044"]
+  username: "elastic"
+  password: "Uday@123"

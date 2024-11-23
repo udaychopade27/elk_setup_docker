@@ -2,30 +2,69 @@ version: '3.7'
 services:
   elasticsearch:
     image: elasticsearch:7.9.2
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+          cpus: '1'
     container_name: elasticsearch
     ports:
       - '9200:9200'
     environment:
       - discovery.type=single-node
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=Uday@123
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elk-stack.key
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elk-stack.crt
     networks:
       - elastic
     volumes:
       - elk_esdata:/usr/share/elasticsearch/data
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
+      - ./certs/:/usr/share/elasticsearch/config/certs:ro
 
   kibana:
     image: kibana:7.9.2
+    environment:
+      - discovery.type=single-node
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Uday@123
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/kibana/config/certs/elk-stack.key
+      - xpack.security.http.ssl.certificate=/usr/share/kibana/config/certs/elk-stack.crt
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '0.5'
     container_name: kibana
     depends_on:
       - elasticsearch
     ports:
       - '5601:5601'
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+      #- ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
+      - ./certs/:/usr/share/kibana/config/certs:ro
     networks:
       - elastic
 
   logstash:
     image: logstash:7.9.2
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '1'
     container_name: logstash
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Uday@123
     ports:
       - '5044:5044'
     depends_on:
@@ -34,10 +73,20 @@ services:
       - elastic
     volumes:
       - "./logstash_pipeline/:/usr/share/logstash/pipeline:ro"
+      - ./certs:/usr/share/logstash/config/certs
   
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.9.2
     container_name: filebeat
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Uday@123
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
     user: root
     networks:
       - elastic
@@ -53,8 +102,15 @@ services:
     environment:
       - setup.kibana.host="kibana:5601"
       - output.elasticsearch.hosts=["elasticsearch:9200"]
-    entrypoint: ["sh", "-c", "sleep 150 && metricbeat setup && metricbeat -e"]
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=Uday@123
+    entrypoint: ["sh", "-c", "sleep 240 && ./metricbeat setup && ./metricbeat -e"]
     user: root
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
     networks:
       - elastic
     depends_on:
@@ -62,7 +118,6 @@ services:
       - kibana
     volumes:
       - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
-      - "./metricbeat/modules.d:/usr/share/metricbeat/modules.d:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
@@ -75,5 +130,6 @@ networks:
 volumes:
   elk_esdata:
     driver: local
+  kibana_data:
 
 

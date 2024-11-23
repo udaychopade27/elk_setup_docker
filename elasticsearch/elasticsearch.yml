@@ -1,0 +1,89 @@
+# ---------------------------------- Cluster -----------------------------------
+# Cluster name identifies your cluster for auto-discovery. If you're running multiple clusters on the same network, make sure you're using unique names.
+cluster.name: my-cluster
+
+# ------------------------------------ Node ------------------------------------
+# Name for the node. This is the name of a single Elasticsearch instance. 
+# If not set, Elasticsearch will assign a random name.
+node.name: node-1
+
+# Role of the node: whether it should be a master node, data node, etc.
+node.roles: [ master, data, ingest ]
+
+# ----------------------------------- Paths ------------------------------------
+# Path to directory where to store the data (the path should point to a local storage location).
+path.data: /var/lib/elasticsearch
+
+# Path to log files:
+path.logs: /var/log/elasticsearch
+
+# ----------------------------------- Memory -----------------------------------
+# Lock the memory to prevent it from swapping to disk (recommended for production).
+bootstrap.memory_lock: true
+
+# Minimum and maximum heap size. It is recommended to allocate half of the available system memory, but no more than 32 GB.
+# These values are set in the JVM options file, but you can override them here.
+# If you're tuning the heap, you can set it here:
+# Set `-Xms` (minimum heap size) and `-Xmx` (maximum heap size) to the same value to avoid heap resizing.
+# bootstrap.system_call_filter: false
+
+# ---------------------------------- Network -----------------------------------
+# By default, Elasticsearch binds to loopback addresses (localhost) only. Set it to bind to a specific IP or 0.0.0.0 for all available interfaces.
+network.host: 0.0.0.0
+
+# Port to bind to for HTTP communication (REST API). Default is 9200.
+http.port: 9200
+
+# --------------------------------- Discovery ----------------------------------
+# Discovery settings are used for cluster formation.
+# In a multi-node cluster, make sure to provide the IP addresses or hostnames of master-eligible nodes.
+discovery.seed_hosts: ["127.0.0.1", "node-2", "node-3"]
+
+# Master node election process configuration.
+cluster.initial_master_nodes: ["node-1", "node-2", "node-3"]
+
+# --------------------------------- Gateway ------------------------------------
+# Controls the recovery of data after a full cluster restart. Default is to recover the last known state.
+gateway.recover_after_nodes: 2
+
+# ---------------------------------- Index -------------------------------------
+# Configuration for newly created indices (optional).
+index.number_of_shards: 1
+index.number_of_replicas: 1
+
+# ---------------------------------- Security ----------------------------------
+# Enable security features (if you have an Elastic license or are using Elastic Stack security features).
+xpack.security.enabled: true
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/elk-stack.key
+xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/elk-stack.crt
+
+
+
+# --------------------------- Monitoring & Management -------------------------
+# Monitoring settings for Elasticsearch.
+xpack.monitoring.collection.enabled: true
+
+# Enable basic authentication for Kibana and other services to interact with Elasticsearch.
+xpack.security.authc.api_key.enabled: true
+
+# ----------------------------------- Logging ----------------------------------
+# Set the logging level for Elasticsearch. Default is `info`. Other options include `debug`, `warn`, `error`.
+logger.level: info
+
+# Enable logging of slow search queries (optional).
+# logger.index.search.slowlog.threshold.query.warn: 10s
+# logger.index.search.slowlog.threshold.query.info: 5s
+# logger.index.search.slowlog.threshold.query.debug: 2s
+# logger.index.search.slowlog.threshold.query.trace: 500ms
+
+# Enable logging of slow index requests (optional).
+# logger.index.indexing.slowlog.threshold.index.warn: 10s
+# logger.index.indexing.slowlog.threshold.index.info: 5s
+# logger.index.indexing.slowlog.threshold.index.debug: 2s
+# logger.index.indexing.slowlog.threshold.index.trace: 500ms
+
+# ----------------------------------- Misc -------------------------------------
+# Enable or disable the Elastic search watcher service (requires a license).
+xpack.watcher.enabled: true
+
