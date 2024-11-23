@@ -1,0 +1,34 @@
+# Kibana configuration file
+
+# Kibana server configuration
+server.port: 5601
+server.host: "0.0.0.0"
+
+# Enable SSL for Kibana
+server.ssl.enabled: true
+server.ssl.key: /usr/share/kibana/config/certs/elk-stack.key
+server.ssl.certificate: /usr/share/kibana/config/certs/elk-stack.crt
+
+# Elasticsearch connection
+elasticsearch.hosts: ["https://elasticsearch:9200"]
+
+# Enable SSL for Elasticsearch connection
+elasticsearch.ssl.certificateAuthorities: /usr/share/kibana/config/certs/elk-stack.crt
+
+# Basic authentication for Elasticsearch
+elasticsearch.username: "elastic"
+elasticsearch.password: "Uday@123"
+
+# TLS settings for Kibana
+# Optional: if using mutual TLS with a client certificate
+# elasticsearch.ssl.certificate: /usr/share/kibana/config/certs/client-cert.crt
+# elasticsearch.ssl.key: /usr/share/kibana/config/certs/client-cert.key
+
+# Optional: set logging verbosity
+logging.verbose: false
+
+# Telemetry settings (disable for privacy/security)
+telemetry.enabled: false
+
+# # Enable HTTPS-only (recommended for secure setups)
+# server.ssl.redirectHttpFromPort: 80

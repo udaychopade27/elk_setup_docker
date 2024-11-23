@@ -48,7 +48,7 @@ services:
       - '5601:5601'
     volumes:
       - kibana_data:/usr/share/kibana/data
-      #- ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
       - ./certs/:/usr/share/kibana/config/certs:ro
     networks:
       - elastic
