@@ -16,8 +16,8 @@ services:
       - ELASTIC_PASSWORD=Uday@123
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elk-stack.key
-      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elk-stack.crt
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch.key
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch.crt
     networks:
       - elastic
     volumes:
@@ -34,8 +34,8 @@ services:
       - ELASTICSEARCH_PASSWORD=Uday@123
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=/usr/share/kibana/config/certs/elk-stack.key
-      - xpack.security.http.ssl.certificate=/usr/share/kibana/config/certs/elk-stack.crt
+      - xpack.security.http.ssl.key=/usr/share/kibana/config/certs/elasticsearch.key
+      - xpack.security.http.ssl.certificate=/usr/share/kibana/config/certs/elasticsearch.crt
     deploy:
       resources:
         limits:
@@ -62,7 +62,7 @@ services:
           cpus: '1'
     container_name: logstash
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Uday@123
     ports:
@@ -72,29 +72,30 @@ services:
     networks:
       - elastic
     volumes:
-      - "./logstash_pipeline/:/usr/share/logstash/pipeline:ro"
-      - ./certs:/usr/share/logstash/config/certs
+      - "./logstash_pipeline/:/usr/share/logstash/pipeline:rw"
+      - "./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:rw"
+      - "./certs:/usr/share/logstash/config/certs:rw"
   
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:7.9.2
-    container_name: filebeat
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Uday@123
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: '0.5'
-    user: root
-    networks:
-      - elastic
-    volumes:
-      - "./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:rw"
-      - "/var/log/:/var/log:ro"
-    depends_on:
-      - elasticsearch
+  # filebeat:
+  #   image: docker.elastic.co/beats/filebeat:7.9.2
+  #   container_name: filebeat
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #     - ELASTICSEARCH_USERNAME=elastic
+  #     - ELASTICSEARCH_PASSWORD=Uday@123
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M
+  #         cpus: '0.5'
+  #   user: root
+  #   networks:
+  #     - elastic
+  #   volumes:
+  #     - "./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:rw"
+  #     - "/var/log/:/var/log:ro"
+  #   depends_on:
+  #     - elasticsearch
 
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:7.9.2
@@ -118,10 +119,13 @@ services:
       - kibana
     volumes:
       - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
+      - "./certs:/usr/share/metricbeat/config/certs:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
       - "/:/hostfs:ro"
+  
+      
     
 
 networks:

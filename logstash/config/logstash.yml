@@ -1,2 +1,35 @@
+# logstash.yml
+
+# ------------ Pipeline Settings --------------
+# The directory where pipeline configuration files are located.
+path.config: /usr/share/logstash/pipeline
+
+# ------------ Logging Settings ---------------
+# Log level (default: info). Options: trace | debug | info | warn | error | fatal
+log.level: info
+
+# Path to the Logstash log file.
+path.logs: /usr/share/logstash/logs
+
+# ------------ Monitoring Settings ------------
+# Enable monitoring of Logstash with Elasticsearch.
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch:9200"]
+xpack.monitoring.elasticsearch.username: "elastic"
+xpack.monitoring.elasticsearch.password: "Uday@123"
+xpack.monitoring.elasticsearch.ssl.certificate_authority: "/usr/share/logstash/config/certs/elasticsearch.crt"
+
+# ------------ Other Optional Settings --------
+# Shutdown timeout in seconds (default: 30 seconds).
+# pipeline.shutdown_timeout: 30        #not supported in current verison
+
+# Bind address for Logstash HTTP API (default: 127.0.0.1).
 http.host: "0.0.0.0"
+
+# Port for Logstash HTTP API (default: 9600-9700).
+http.port: 9600
+
+# Elasticsearch output configuration for persistent queues (if applicable).
+queue.type: persisted
+
 

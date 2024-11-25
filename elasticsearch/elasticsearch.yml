@@ -55,8 +55,8 @@ index.number_of_replicas: 1
 # Enable security features (if you have an Elastic license or are using Elastic Stack security features).
 xpack.security.enabled: true
 xpack.security.http.ssl.enabled: true
-xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/elk-stack.key
-xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/elk-stack.crt
+xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/elasticsearch.key
+xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/elasticsearch.crt
 
 
 
