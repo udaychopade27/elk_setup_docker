@@ -1,11 +1,11 @@
 # Generate a private key
-openssl genrsa -out elk-stack.key 2048
+openssl genrsa -out elasticsearch.key 2048
 
 # Create a certificate signing request (CSR)
-openssl req -new -key elk-stack.key -out elk-stack.csr
+openssl req -new -key elasticsearch.key -out elasticsearch.csr
 
 # Generate a self-signed certificate
-openssl x509 -req -days 365 -in elk-stack.csr -signkey elk-stack.key -out elk-stack.crt
+openssl x509 -req -days 365 -in elasticsearch.csr -signkey elasticsearch.key -out elasticsearch.crt
 
 
 

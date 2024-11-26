@@ -6,11 +6,11 @@ server.host: "0.0.0.0"
 
 # Enable SSL for Kibana
 server.ssl.enabled: true
-server.ssl.key: /usr/share/kibana/config/certs/elasticsearch.key
-server.ssl.certificate: /usr/share/kibana/config/certs/elasticsearch.crt
+server.ssl.key: /usr/share/kibana/config/certs/kibana.key
+server.ssl.certificate: /usr/share/kibana/config/certs/kibana.crt
 
 # Elasticsearch connection
-elasticsearch.hosts: ["https://elasticsearch:9200"]
+elasticsearch.hosts: ["https://localhost:9200"]
 
 # Enable SSL for Elasticsearch connection
 elasticsearch.ssl.verificationMode: "certificate"  # Use "none" for testing, but secure for production

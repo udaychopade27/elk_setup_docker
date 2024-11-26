@@ -30,17 +30,20 @@ metricbeat.modules:
 
 # ============================== Elasticsearch output ==============================
 output.elasticsearch:
-  hosts: ["https://elasticsearch:9200"]  # Replace with your Elasticsearch host and port
+  hosts: ["https://elasticsearch:9200"]
   username: "elastic"
   password: "Uday@123"
-  elasticsearch.ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/elasticsearch.crt"]
+  ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/elasticsearch.crt"]
+
 # =============================== Kibana =====================================
 setup.kibana:
-  host: "https://kibana:5601"  # Replace with your Kibana host and port
+  host: "https://kibana:5601"
   username: "elastic"
   password: "Uday@123"
-  ssl.verificationMode: "certificate"  # Use "none" for testing, but secure for production
-  # ssl.certificateAuthorities: /usr/share/metricbeat/config/certs/elasticsearch.crt 
+  ssl.verification_mode: "full"  # Replaces "certificate"
+  ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/kibana.crt"]
+
+
 
 # ============================== Logging ==============================
 # Optional logging configuration to help with troubleshooting.

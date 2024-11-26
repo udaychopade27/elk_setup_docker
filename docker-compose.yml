@@ -2,6 +2,7 @@ version: '3.7'
 services:
   elasticsearch:
     image: elasticsearch:7.9.2
+    restart: always
     deploy:
       resources:
         limits:
@@ -29,7 +30,7 @@ services:
     image: kibana:7.9.2
     environment:
       - discovery.type=single-node
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Uday@123
       - xpack.security.enabled=true
@@ -41,6 +42,7 @@ services:
         limits:
           memory: 1024M
           cpus: '0.5'
+    restart: always
     container_name: kibana
     depends_on:
       - elasticsearch
@@ -55,6 +57,7 @@ services:
 
   logstash:
     image: logstash:7.9.2
+    restart: always
     deploy:
       resources:
         limits:
@@ -79,6 +82,7 @@ services:
   # filebeat:
   #   image: docker.elastic.co/beats/filebeat:7.9.2
   #   container_name: filebeat
+  #    restart: always
   #   environment:
   #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
   #     - ELASTICSEARCH_USERNAME=elastic
@@ -100,11 +104,12 @@ services:
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:7.9.2
     container_name: metricbeat
-    environment:
-      - setup.kibana.host="kibana:5601"
-      - output.elasticsearch.hosts=["elasticsearch:9200"]
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Uday@123
+    restart: always
+    # environment:
+    #   - setup.kibana.host="https://kibana:5601"
+    #   - output.elasticsearch.hosts=["https://elasticsearch:9200"]
+    #   - ELASTICSEARCH_USERNAME=elastic
+    #   - ELASTICSEARCH_PASSWORD=Uday@123
     entrypoint: ["sh", "-c", "sleep 240 && ./metricbeat setup && ./metricbeat -e"]
     user: root
     deploy:
