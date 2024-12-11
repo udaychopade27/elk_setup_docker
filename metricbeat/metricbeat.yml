@@ -4,28 +4,29 @@ metricbeat.config.modules:
   reload.enabled: false
 
 # ============================== Metricbeat Autodiscover ==============================
-metricbeat.autodiscover:
-  providers:
-    - type: docker
-      hints.enabled: true
-      # Optionally, specify the Docker API endpoint
-      host: "unix:///var/run/docker.sock"
-      # If running Metricbeat in a Docker container, you might need:
-      #host: "unix:///hostfs/var/run/docker.sock"
-metricbeat.modules:
-- module: system
-  period: 10s
-  metricsets:
-    - cpu
-    - memory
-    - network
-    - filesystem
-    - diskio
-    - load
-    - uptime
-  enabled: true
+# metricbeat.autodiscover:
+#   providers:
+#     - type: docker
+#       hints.enabled: true
+#       # Optionally, specify the Docker API endpoint
+#       host: "unix:///var/run/docker.sock"
+#       # If running Metricbeat in a Docker container, you might need:
+#       #host: "unix:///hostfs/var/run/docker.sock"
+# metricbeat.modules:
+# - module: system
+#   period: 10s
+#   metricsets:
+#     - cpu
+#     - memory
+#     - network
+#     - filesystem
+#     - diskio
+#     - load
+#     - uptime
+#   enabled: true
   processors:
-    - add_host_metadata: ~
+    - add_host_metadata: 
+      netinfo.enabled: true
     - add_cloud_metadata: ~
 
 # ============================== Elasticsearch output ==============================
@@ -41,7 +42,7 @@ output.elasticsearch:
   - index: "metricbeat-index-%{+yyyy.MM.dd}" # Example custom index
     when.equals:
       metricset.name: "memory" # Optional condition for specific metricset
-
+  pipeline: "replace-hostname-with-ip"
 # Setup to load the template
 setup.template:
   enabled: true
@@ -51,8 +52,8 @@ setup.template:
 
 # Set the default index lifecycle policy
 setup.ilm.enabled: true
-setup.ilm.policy_name: "7-days-default"
-setup.ilm.rollover_alias: "metricbeat"
+setup.ilm.policy_name: "metricbeat"
+setup.ilm.rollover_alias: "metricbeat-7.17.9"
 setup.ilm.pattern: "{now/d}-000001"
 # =============================== Kibana =====================================
 setup.kibana:

@@ -19,8 +19,8 @@ services:
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch.key
       - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch.crt
-    networks:
-      - elastic
+    # networks:
+    #   - elastic
     volumes:
       - elk_esdata:/usr/share/elasticsearch/data
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
@@ -52,8 +52,8 @@ services:
       - kibana_data:/usr/share/kibana/data
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
       - ./certs/:/usr/share/kibana/config/certs:ro
-    networks:
-      - elastic
+    # networks:
+    #   - elastic
 
   logstash:
     image: logstash:7.9.2
@@ -72,8 +72,8 @@ services:
       - '5044:5044'
     depends_on:
       - elasticsearch
-    networks:
-      - elastic
+    # networks:
+    #   - elastic
     volumes:
       - "./logstash_pipeline/:/usr/share/logstash/pipeline:rw"
       - "./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:rw"
@@ -117,14 +117,15 @@ services:
         limits:
           memory: 256M
           cpus: '0.5'
-    networks:
-      - elastic
+    # networks:
+    #   - elastic
     depends_on:
       - elasticsearch
       - kibana
     volumes:
-      - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
-      - "./certs:/usr/share/metricbeat/config/certs:rw"
+      - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:rw"
+      - "./metricbeat/modules.d/:/usr/share/metricbeat/modules.d/:rw"
+      - "./certs:/usr/share/metricbeat/config/certs:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
