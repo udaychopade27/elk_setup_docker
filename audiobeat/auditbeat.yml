@@ -1,0 +1,84 @@
+###################### Auditbeat Configuration ##########################
+
+# ======================== File Integrity Module =========================
+auditbeat.modules:
+
+- module: file_integrity
+  paths:
+    - /bin
+    - /usr/bin
+    - /sbin
+    - /usr/sbin
+    - /etc
+  exclude_files:
+    - '(?i)\.sw[nop]$'
+    - '~$'
+    - '/\.git($|/)'
+  scan_at_start: true
+  recursive: true
+
+# ======================== Auditd Module =============================
+- module: auditd
+  resolve_ids: true
+  failure_mode: silent
+  backlog_limit: 8192
+  rate_limit: 0
+  audit_rules: |
+    ## Collect file access logs.
+    -w /etc/passwd -p wa -k identity
+    -w /etc/shadow -p wa -k identity
+    -w /etc/group -p wa -k identity
+    -w /etc/gshadow -p wa -k identity
+
+    ## Monitor privileged commands.
+    -a always,exit -F arch=b64 -S execve -C uid!=euid -F key=privileged
+
+# ======================= General Config ================================
+# Setup the output destination.
+output.elasticsearch:
+  hosts: ["https://localhost:9200"]
+  username: "elastic"          # Optional: Add if authentication is enabled
+  password: "Uday@123"
+  ssl.certificate_authorities: ["/usr/share/audiobeat/config/certs/elasticsearch.crt"]
+
+# Optional: Send data to Logstash first
+#output.logstash:
+#  hosts: ["localhost:5044"]
+
+# ======================= Kibana ===============================
+setup.kibana:
+  host: "https://localhost:5601"
+  username: "elastic"          # Optional
+  password: "Uday@123"
+  ssl.certificate_authorities: ["/usr/share/audiobeat/config/certs/kibana.crt"]
+
+# ====================== Logging ==============================
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/auditbeat
+  name: auditbeat.log
+  keepfiles: 7
+  permissions: 0644
+
+# ====================== Setup Dashboards ======================
+setup.dashboards.enabled: true
+
+# # ===================== Data Index Life Cycle ====================
+# # Automatically delete older indices.
+# setup.ilm.enabled: auto
+# setup.ilm.rollover_alias: "auditbeat"
+# setup.ilm.pattern: "{now/d}-000001"
+
+# ====================== Monitoring ============================
+monitoring.enabled: true
+monitoring.elasticsearch:
+  hosts: ["https://localhost:9200"]
+  username: "elastic"
+  password: "Uday@123"
+  ssl.certificate_authorities: ["/usr/share/audiobeat/config/certs/elasticsearch.crt"]
+# ====================== Processors ============================
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~

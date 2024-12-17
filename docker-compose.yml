@@ -130,6 +130,31 @@ services:
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
       - "/:/hostfs:ro"
+
+  audiobeat:
+    image: docker.elastic.co/beats/auditbeat:7.9.2
+    container_name: audiobeat
+    user: root # Required to access system files and auditd
+    command: >
+      bash -c "apt-get update && apt-get install -y libtinfo6 && auditbeat -e --strict.perms=false"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    volumes:
+      - ./audiobeat/auditbeat.yml:/usr/share/auditbeat/auditbeat.yml:ro  # Custom config file
+      - /var/log:/var/log:ro                                   # Access to system logs
+      - /etc:/etc:ro                                          # Monitor system configuration files
+      - /usr/bin:/usr/bin:ro                                  # Monitor binary files
+      - /usr/sbin:/usr/sbin:ro
+      - /proc:/hostfs/proc:ro                                 # Required for process monitoring
+      - /var/run/docker.sock:/var/run/docker.sock:ro 
+      - ./certs/:/usr/share/audiobeat/config/certs/
+    depends_on:
+      - elasticsearch
+      - kibana
+    
   
       
     
