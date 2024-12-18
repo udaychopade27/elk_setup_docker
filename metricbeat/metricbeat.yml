@@ -31,10 +31,10 @@ metricbeat.config.modules:
 
 # ============================== Elasticsearch output ==============================
 output.elasticsearch:
-  hosts: ["https://elasticsearch:9200"]
+  hosts: ["http://elasticsearch:9200"]
   username: "elastic"
   password: "Uday@123"
-  ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/elasticsearch.crt"]
+  # ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/elasticsearch.crt"]
   indices:
   - index: "metricbeat-%{[agent.version]}-%{+yyyy.MM.dd}" # Default pattern
     when.contains:
@@ -57,11 +57,11 @@ setup.ilm.rollover_alias: "metricbeat-7.17.9"
 setup.ilm.pattern: "{now/d}-000001"
 # =============================== Kibana =====================================
 setup.kibana:
-  host: "https://kibana:5601"
+  host: "http://kibana:5601"
   username: "elastic"
   password: "Uday@123"
-  ssl.verification_mode: "full"  # Replaces "certificate"
-  ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/kibana.crt"]
+  # ssl.verification_mode: "full"  # Replaces "certificate"
+  # ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/kibana.crt"]
 
 
 

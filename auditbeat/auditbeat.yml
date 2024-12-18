@@ -36,10 +36,10 @@ auditbeat.modules:
 # ======================= General Config ================================
 # Setup the output destination.
 output.elasticsearch:
-  hosts: ["https://elasticsearch:9200"]
+  hosts: ["http://elasticsearch:9200"]
   username: "elastic"          # Optional: Add if authentication is enabled
   password: "Uday@123"
-  ssl.verification_mode: "none"
+  # ssl.verification_mode: "none"
   # ssl.certificate_authorities: ["/usr/share/auditbeat/config/certs/elasticsearch.crt"]
 
 # Optional: Send data to Logstash first
@@ -48,10 +48,10 @@ output.elasticsearch:
 
 # ======================= Kibana ===============================
 setup.kibana:
-  host: "https://kibana:5601"
+  host: "http://kibana:5601"
   username: "elastic"          # Optional
   password: "Uday@123"
-  ssl.verification_mode: "none"
+  # ssl.verification_mode: "none"
   # ssl.certificate_authorities: ["/usr/share/auditbeat/config/certs/kibana.crt"]
 
 # ====================== Logging ==============================

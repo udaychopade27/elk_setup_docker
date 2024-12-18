@@ -1,7 +1,7 @@
-
+version: '3.7'
 services:
   elasticsearch:
-    image: elasticsearch:8.10.1
+    image: elasticsearch:8.13.0
     restart: always
     deploy:
       resources:
@@ -15,10 +15,10 @@ services:
       - discovery.type=single-node
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Uday@123
-      # - xpack.security.enabled=true
-      # - xpack.security.http.ssl.enabled=true
-      # - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch.key
-      # - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch.crt
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch.key
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch.crt
     # networks:
     #   - elastic
     volumes:
@@ -27,16 +27,16 @@ services:
       - ./certs/:/usr/share/elasticsearch/config/certs:ro
 
   kibana:
-    image: kibana:7.9.2
+    image: kibana:8.13.0
     environment:
       - discovery.type=single-node
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Uday@123
-      # - xpack.security.enabled=true
-      # - xpack.security.http.ssl.enabled=true
-      # - xpack.security.http.ssl.key=/usr/share/kibana/config/certs/elasticsearch.key
-      # - xpack.security.http.ssl.certificate=/usr/share/kibana/config/certs/elasticsearch.crt
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/kibana/config/certs/elasticsearch.key
+      - xpack.security.http.ssl.certificate=/usr/share/kibana/config/certs/elasticsearch.crt
     deploy:
       resources:
         limits:
@@ -56,7 +56,7 @@ services:
     #   - elastic
 
   logstash:
-    image: logstash:7.9.2
+    image: logstash:8.13.0
     restart: always
     deploy:
       resources:
@@ -65,7 +65,7 @@ services:
           cpus: '1'
     container_name: logstash
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Uday@123
     ports:
@@ -103,15 +103,15 @@ services:
   #     - elasticsearch
 
   metricbeat:  
-    image: docker.elastic.co/beats/metricbeat:7.9.2
+    image: docker.elastic.co/beats/metricbeat:8.13.0
     container_name: metricbeat
     restart: always
-    environment:
-      - setup.kibana.host="http://kibana:5601"
-      - output.elasticsearch.hosts=["http://elasticsearch:9200"]
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=Uday@123
-    entrypoint: ["sh", "-c", "sleep 200 && chmod 600 /usr/share/metricbeat/metricbeat.yml && ./metricbeat setup && ./metricbeat -e"]
+    # environment:
+    #   - setup.kibana.host="https://kibana:5601"
+    #   - output.elasticsearch.hosts=["https://elasticsearch:9200"]
+    #   - ELASTICSEARCH_USERNAME=elastic
+    #   - ELASTICSEARCH_PASSWORD=Uday@123
+    entrypoint: ["sh", "-c", "sleep 240 && ./metricbeat setup && ./metricbeat -e"]
     user: root
     deploy:
       resources:
@@ -121,7 +121,7 @@ services:
     # networks:
     #   - elastic
     depends_on:
-      # - elasticsearch
+      - elasticsearch
       - kibana
     volumes:
       - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:rw"
@@ -159,7 +159,7 @@ services:
       - "/usr/sbin:/usr/sbin:ro"
       - "/proc:/hostfs/proc:ro"                                 # Required for process monitoring
       - "/var/run/docker.sock:/var/run/docker.sock:ro" 
-    entrypoint: ["/bin/sh", "-c", "sleep 200 && chmod 600 /usr/share/auditbeat/auditbeat.yml && auditbeat setup && auditbeat -e"]
+    entrypoint: ["/bin/sh", "-c", "sleep 240 && chmod 600 /usr/share/auditbeat/auditbeat.yml && auditbeat setup && auditbeat -e"]
       
   #   # depends_on:
   #   #   - elasticsearch
