@@ -32,7 +32,14 @@ auditbeat.modules:
 
     ## Monitor privileged commands.
     -a always,exit -F arch=b64 -S execve -C uid!=euid -F key=privileged
-
+- module: system
+  datasets:
+          - host
+          - login
+          - package
+          - process
+            #  - socket
+          - user
 # ======================= General Config ================================
 # Setup the output destination.
 output.elasticsearch:
