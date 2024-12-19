@@ -3,18 +3,19 @@
 # Kibana server configuration
 server.port: 5601
 server.host: "0.0.0.0"
+# allow_older_versions: true
 
 # Enable SSL for Kibana
-# server.ssl.enabled: true
-# server.ssl.key: /usr/share/kibana/config/certs/kibana.key
-# server.ssl.certificate: /usr/share/kibana/config/certs/kibana.crt
+server.ssl.enabled: true
+server.ssl.key: /usr/share/kibana/config/certs/kibana.key
+server.ssl.certificate: /usr/share/kibana/config/certs/kibana.crt
 
 # Elasticsearch connection
-elasticsearch.hosts: ["http://localhost:9200"]
+elasticsearch.hosts: ["https://localhost:9200"]
 
 # Enable SSL for Elasticsearch connection
-# elasticsearch.ssl.verificationMode: "certificate"  # Use "none" for testing, but secure for production
-# elasticsearch.ssl.certificateAuthorities: /usr/share/kibana/config/certs/elasticsearch.crt
+elasticsearch.ssl.verificationMode: "certificate"  # Use "none" for testing, but secure for production
+elasticsearch.ssl.certificateAuthorities: /usr/share/kibana/config/certs/elasticsearch.crt
 
 
 # Basic authentication for Elasticsearch
@@ -28,11 +29,11 @@ elasticsearch.password: "Uday@123"
 # elasticsearch.ssl.certificate: /usr/share/kibana/config/certs/client-cert.crt
 # elasticsearch.ssl.key: /usr/share/kibana/config/certs/client-cert.key
 
-# Optional: set logging verbosity
+# # Optional: set logging verbosity
 logging.verbose: false
 
-# Telemetry settings (disable for privacy/security)
-telemetry.enabled: false
+# # Telemetry settings (disable for privacy/security)
+# telemetry.enabled: false
 
 # # Enable HTTPS-only (recommended for secure setups)
 # server.ssl.redirectHttpFromPort: 80

@@ -8,6 +8,7 @@ openssl req -new -key elasticsearch.key -out elasticsearch.csr
 openssl x509 -req -days 365 -in elasticsearch.csr -signkey elasticsearch.key -out elasticsearch.crt
 
 
+openssl genrsa -out kibana.key 2048
 
-
-
+openssl req -new -key kibana.key -out kibana.csr
+openssl x509 -req -days 365 -in kibana.csr -signkey kibana.key -out kibana.crt

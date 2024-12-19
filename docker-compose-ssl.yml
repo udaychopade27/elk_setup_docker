@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   elasticsearch:
-    image: elasticsearch:8.13.0
+    image: elasticsearch:7.9.2
     restart: always
     deploy:
       resources:
@@ -15,19 +15,19 @@ services:
       - discovery.type=single-node
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=Uday@123
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
-      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch.key
-      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch.crt
+      # - xpack.security.enabled=true
+      # - xpack.security.http.ssl.enabled=true
+      # - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch.key
+      # - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch.crt
     # networks:
     #   - elastic
     volumes:
       - elk_esdata:/usr/share/elasticsearch/data
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
-      - ./certs/:/usr/share/elasticsearch/config/certs:ro
+      - "./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw"
+      - "./certs/:/usr/share/elasticsearch/config/certs:rw"
 
   kibana:
-    image: kibana:8.13.0
+    image: kibana:7.9.2
     environment:
       - discovery.type=single-node
       - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
@@ -56,7 +56,7 @@ services:
     #   - elastic
 
   logstash:
-    image: logstash:8.13.0
+    image: logstash:7.9.2
     restart: always
     deploy:
       resources:
@@ -68,12 +68,14 @@ services:
       - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Uday@123
+    entrypoint: [ "sh", "-c", "chmod 600 /usr/share/elasticsearch/config/certs/elasticsearch.key", "logstash -f /usr/share/logstash/pipeline/logstash.conf"]
     ports:
       - '5044:5044'
     depends_on:
       - elasticsearch
     # networks:
     #   - elastic
+    entrypoint: [ "sh", "-c", "chmod 600 /usr/share/logstash/config/certs/elasticsearch.key"]
     volumes:
       - "./logstash_pipeline/:/usr/share/logstash/pipeline:rw"
       - "./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:rw"
@@ -103,7 +105,7 @@ services:
   #     - elasticsearch
 
   metricbeat:  
-    image: docker.elastic.co/beats/metricbeat:8.13.0
+    image: docker.elastic.co/beats/metricbeat:7.9.2
     container_name: metricbeat
     restart: always
     # environment:
@@ -126,14 +128,14 @@ services:
     volumes:
       - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:rw"
       - "./metricbeat/modules.d/:/usr/share/metricbeat/modules.d/:rw"
-      - "./certs:/usr/share/metricbeat/config/certs:ro"
+      - "./certs:/usr/share/metricbeat/config/certs:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
       - "/:/hostfs:ro"
 
   auditbeat:
-    image: docker.elastic.co/beats/auditbeat:8.17.0
+    image: docker.elastic.co/beats/auditbeat:7.9.2
     # build:
     #   context: ./auditbeat
     #   dockerfile: Dockerfile

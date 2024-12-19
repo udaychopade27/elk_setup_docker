@@ -36,11 +36,11 @@ auditbeat.modules:
 # ======================= General Config ================================
 # Setup the output destination.
 output.elasticsearch:
-  hosts: ["http://elasticsearch:9200"]
+  hosts: ["https://elasticsearch:9200"]
   username: "elastic"          # Optional: Add if authentication is enabled
   password: "Uday@123"
-  # ssl.verification_mode: "none"
-  # ssl.certificate_authorities: ["/usr/share/auditbeat/config/certs/elasticsearch.crt"]
+  ssl.verification_mode: "full"
+  ssl.certificate_authorities: ["/usr/share/auditbeat/config/certs/elasticsearch.crt"]
 
 # Optional: Send data to Logstash first
 #output.logstash:
@@ -48,11 +48,11 @@ output.elasticsearch:
 
 # ======================= Kibana ===============================
 setup.kibana:
-  host: "http://kibana:5601"
+  host: "https://kibana:5601"
   username: "elastic"          # Optional
   password: "Uday@123"
-  # ssl.verification_mode: "none"
-  # ssl.certificate_authorities: ["/usr/share/auditbeat/config/certs/kibana.crt"]
+  ssl.verification_mode: "full"
+  ssl.certificate_authorities: ["/usr/share/auditbeat/config/certs/kibana.crt"]
 
 # ====================== Logging ==============================
 # logging.level: info
@@ -65,10 +65,12 @@ setup.kibana:
 
 # ====================== Setup Dashboards ======================
 setup.dashboards.enabled: true
+# setup.ilm.overwrite: true
 
-# # ===================== Data Index Life Cycle ====================
+
+# # # ===================== Data Index Life Cycle ====================
 # # Automatically delete older indices.
-# setup.ilm.enabled: auto
+# setup.ilm.enabled: true
 # setup.ilm.rollover_alias: "auditbeat"
 # setup.ilm.pattern: "{now/d}-000001"
 

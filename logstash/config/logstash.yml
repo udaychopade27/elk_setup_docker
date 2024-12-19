@@ -17,7 +17,7 @@ xpack.monitoring.enabled: true
 xpack.monitoring.elasticsearch.hosts: ["http://elasticsearch:9200"]
 xpack.monitoring.elasticsearch.username: "elastic"
 xpack.monitoring.elasticsearch.password: "Uday@123"
-# xpack.monitoring.elasticsearch.ssl.certificate_authority: "/usr/share/logstash/config/certs/elasticsearch.crt"
+xpack.monitoring.elasticsearch.ssl.certificate_authority: "/usr/share/logstash/config/certs/elasticsearch.crt"
 
 # ------------ Other Optional Settings --------
 # Shutdown timeout in seconds (default: 30 seconds).
