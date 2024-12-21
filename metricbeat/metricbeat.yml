@@ -35,26 +35,15 @@ output.elasticsearch:
   username: "elastic"
   password: "Uday@123"
   ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/elasticsearch.crt"]
-  indices:
-  - index: "metricbeat-%{[agent.version]}-%{+yyyy.MM.dd}" # Default pattern
-    when.contains:
-      event.dataset: "system.cpu" # Optional condition for specific dataset
-  - index: "metricbeat-index-%{+yyyy.MM.dd}" # Example custom index
-    when.equals:
-      metricset.name: "memory" # Optional condition for specific metricset
-  # pipeline: "replace-hostname-with-ip"
-# Setup to load the template
-setup.template:
-  enabled: true
-  name: "metricbeat"
-  pattern: "metricbeat-*"
-  overwrite: false
 
-# Set the default index lifecycle policy
+setup.template.name: "metricbeat-7.9.2"
+setup.template.pattern: "metricbeat-7.9.2-*"
+setup.template.enabled: true
 setup.ilm.enabled: true
 setup.ilm.policy_name: "metricbeat"
-setup.ilm.rollover_alias: "metricbeat-7.17.9"
-setup.ilm.pattern: "{now/d}-000001"
+setup.ilm.rollover_alias: "metricbeat-7.9.2"
+#above wil create a index with index name metricbeat-7.9.2-<date>-000001 and rollover the new index when lifeycle policy rule is satisfied
+
 # =============================== Kibana =====================================
 setup.kibana:
   host: "https://kibana:5601"
