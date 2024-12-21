@@ -68,14 +68,14 @@ services:
       - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=Uday@123
-    entrypoint: [ "sh", "-c", "chmod 600 /usr/share/elasticsearch/config/certs/elasticsearch.key", "logstash -f /usr/share/logstash/pipeline/logstash.conf"]
+    # entrypoint: [ "sh", "-c", "chmod 600 /usr/share/logstash/config/certs/elasticsearch.key", "logstash -f /usr/share/logstash/pipeline/beats.conf"]
     ports:
       - '5044:5044'
     depends_on:
       - elasticsearch
     # networks:
     #   - elastic
-    entrypoint: [ "sh", "-c", "chmod 600 /usr/share/logstash/config/certs/elasticsearch.key"]
+    # entrypoint: [ "sh", "-c", "chmod 600 /usr/share/logstash/config/certs/elasticsearch.key"]
     volumes:
       - "./logstash_pipeline/:/usr/share/logstash/pipeline:rw"
       - "./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:rw"

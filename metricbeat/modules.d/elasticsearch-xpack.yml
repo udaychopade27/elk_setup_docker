@@ -1,0 +1,11 @@
+ck.enabled: true
+    period: 10s
+    hosts: ["http://elasticsearch:9200"] 
+    #scope: node 
+    username: "elastic"
+    password: "Uday@123"
+    ssl.enabled: true
+    ssl.certificate_authorities: ["/usr/share/metricbeat/config/certs/elasticsearch.crt"]
+    ssl.certificate: "/usr/share/metricbeat/config/certs/elasticsearch.pem"
+    ssl.key: "/usr/share/metricbeat/config/certs/elasticsearch.key"
+    ssl.verification_mode: "full"
